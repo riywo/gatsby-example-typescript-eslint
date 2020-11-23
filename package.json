@@ -60,7 +60,7 @@
   },
   "scripts": {
     "build": "gatsby build",
-    "develop": "gatsby develop",
+    "develop": "gatsby clean && gatsby develop",
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
