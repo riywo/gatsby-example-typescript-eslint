@@ -5,16 +5,49 @@ import Bio from "../components/bio"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 
-const BlogPostTemplate = ({ data, location }) => {
+type BlogPostBySlugQuery = {
+  readonly site: GatsbyTypes.Maybe<{
+    readonly siteMetadata: GatsbyTypes.Maybe<
+      Pick<GatsbyTypes.SiteSiteMetadata, "title">
+    >
+  }>
+  readonly markdownRemark: GatsbyTypes.Maybe<
+    Pick<GatsbyTypes.MarkdownRemark, "id" | "excerpt" | "html"> & {
+      readonly frontmatter: Pick<
+        GatsbyTypes.Frontmatter,
+        "title" | "date" | "description"
+      >
+    }
+  >
+  readonly previous: GatsbyTypes.Maybe<{
+    readonly fields: GatsbyTypes.Maybe<Pick<GatsbyTypes.Fields, "slug">>
+    readonly frontmatter: GatsbyTypes.Maybe<
+      Pick<GatsbyTypes.Frontmatter, "title">
+    >
+  }>
+  readonly next: GatsbyTypes.Maybe<{
+    readonly fields: GatsbyTypes.Maybe<Pick<GatsbyTypes.Fields, "slug">>
+    readonly frontmatter: GatsbyTypes.Maybe<
+      Pick<GatsbyTypes.Frontmatter, "title">
+    >
+  }>
+}
+
+export interface Props {
+  data: BlogPostBySlugQuery
+  location: Location
+}
+
+const BlogPostTemplate: React.FC<Props> = ({ data, location }) => {
   const post = data.markdownRemark
-  const siteTitle = data.site.siteMetadata?.title || `Title`
+  const siteTitle = data.site?.siteMetadata?.title || `Title`
   const { previous, next } = data
 
   return (
     <Layout location={location} title={siteTitle}>
       <SEO
-        title={post.frontmatter.title}
-        description={post.frontmatter.description || post.excerpt}
+        title={post?.frontmatter.title || ``}
+        description={post?.frontmatter.description || post?.excerpt}
       />
       <article
         className="blog-post"
@@ -22,11 +55,11 @@ const BlogPostTemplate = ({ data, location }) => {
         itemType="http://schema.org/Article"
       >
         <header>
-          <h1 itemProp="headline">{post.frontmatter.title}</h1>
-          <p>{post.frontmatter.date}</p>
+          <h1 itemProp="headline">{post?.frontmatter.title}</h1>
+          <p>{post?.frontmatter.date}</p>
         </header>
         <section
-          dangerouslySetInnerHTML={{ __html: post.html }}
+          dangerouslySetInnerHTML={{ __html: post?.html || `` }}
           itemProp="articleBody"
         />
         <hr />
@@ -46,15 +79,15 @@ const BlogPostTemplate = ({ data, location }) => {
         >
           <li>
             {previous && (
-              <Link to={previous.fields.slug} rel="prev">
-                ← {previous.frontmatter.title}
+              <Link to={previous.fields?.slug || ``} rel="prev">
+                ← {previous.frontmatter?.title}
               </Link>
             )}
           </li>
           <li>
             {next && (
-              <Link to={next.fields.slug} rel="next">
-                {next.frontmatter.title} →
+              <Link to={next.fields?.slug || ``} rel="next">
+                {next.frontmatter?.title} →
               </Link>
             )}
           </li>
